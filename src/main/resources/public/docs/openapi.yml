@@ -12,5 +12,140 @@ paths:
         '200':
           description: It's a response.
 
+  /files:
+    post:
+      summary: Upload a file
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Name of the file
+          schema:
+            type: string
+        - name: contentType
+          in: query
+          required: true
+          description: MIME type of the file
+          schema:
+            type: string
+        - name: meta
+          in: query
+          required: true
+          description: Metadata in JSON format
+          schema:
+            type: string
+        - name: source
+          in: query
+          required: true
+          description: Source of the file
+          schema:
+            type: string
+        - name: expireTime
+          in: query
+          required: false
+          description: Expiration time of the file in ISO 8601 format
+          schema:
+            type: string
+        - name: content
+          in: query
+          required: true
+          description: The file content
+          schema:
+            type: string
+            format: binary
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '500':
+          description: Internal server error
+
+    /files/metas:
+      post:
+        summary: Retrieve file metadata
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      type: string
+        responses:
+          '200':
+            description: Metadata retrieved successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    files:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          filename:
+                            type: string
+                          size:
+                            type: integer
+                          contentType:
+                            type: string
+                          createTime:
+                            type: string
+                            format: date-time
+          '404':
+            description: File not found
+          '500':
+            description: Internal server error
+
+    /file/{token}:
+      get:
+        summary: Download a file
+        parameters:
+          - name: token
+            in: path
+            required: true
+            description: Token of the file
+            schema:
+              type: string
+        responses:
+          '200':
+            description: File retrieved successfully
+            content:
+              application/octet-stream:
+                schema:
+                  type: string
+                  format: binary
+          '404':
+            description: File not found
+          '500':
+            description: Internal server error
+
+      delete:
+        summary: Delete a file
+        parameters:
+          - name: token
+            in: path
+            required: true
+            description: Token of the file
+            schema:
+              type: string
+        responses:
+          '204':
+            description: File deleted successfully
+          '404':
+            description: File not found
+          '500':
+            description: Internal server error
+
 security:
   - basicAuth: []
