@@ -16,10 +16,10 @@ class StatusController(
     @RequestMapping("/status", method = [RequestMethod.GET])
     fun getStatus(): ResponseEntity<Map<String, Any>> {
         entityRepository.save(
-            Entity().also {
-                it.name = UUID.randomUUID().toString()
-                it.value = "asd"
-            }
+            Entity(
+                token = UUID.randomUUID().toString(),
+                filename = "asd",
+            )
         )
 
         return ResponseEntity(

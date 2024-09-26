@@ -11,6 +11,8 @@ services:
     ports:
       - 27027:27017
     command: mongod --logpath=/dev/null # --quiet
+    extra_hosts:
+      - "filedb:127.0.0.1"
 
 volumes:
   filedb-data:
